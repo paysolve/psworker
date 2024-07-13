@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  code: MyString
+  identifier: MyString
+  posted_date: MyString
+  posted_datetime: 2024-06-14 05:31:40
+  connection_identifier: MyString
+  account: one
+  data_digest: MyString
+  psmain_code: MyString
+
+two:
+  code: MyString
+  identifier: MyString
+  posted_date: MyString
+  posted_datetime: 2024-06-14 05:31:40
+  connection_identifier: MyString
+  account: two
+  data_digest: MyString
+  psmain_code: MyString

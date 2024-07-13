@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  amount: 1
+  bsb: MyString
+  account_name: MyString
+  account_number: MyString
+  disbursement: one
+  status: 1
+  purpose: 1
+  payment_type: 1
+  note: MyString
+
+two:
+  amount: 1
+  bsb: MyString
+  account_name: MyString
+  account_number: MyString
+  disbursement: two
+  status: 1
+  purpose: 1
+  payment_type: 1
+  note: MyString
