@@ -145,6 +145,9 @@ GEM
     nokogiri (1.15.3)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
+    passenger (6.0.22)
+      rack
+      rake (>= 0.8.1)
     public_suffix (5.0.1)
     puma (4.3.12)
       nio4r (~> 2.0)
@@ -245,6 +248,7 @@ DEPENDENCIES
   httparty (~> 0.13.7)
   importmap-rails
   jbuilder
+  passenger
   puma (~> 4.3)
   rails (~> 7.0.6)
   rest-client
