@@ -59,6 +59,7 @@ gem 'rest-client'
 
 group :production do
   gem 'passenger'
+  gem 'pg'
 end
 
 group :development, :test do
