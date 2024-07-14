@@ -173,6 +173,7 @@ GEM
     passenger (6.0.22)
       rack
       rake (>= 0.8.1)
+    pg (1.5.6)
     public_suffix (5.0.1)
     puma (4.3.12)
       nio4r (~> 2.0)
@@ -285,6 +286,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   passenger
+  pg
   puma (~> 4.3)
   rails (~> 7.0.6)
   rest-client
