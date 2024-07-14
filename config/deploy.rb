@@ -21,7 +21,7 @@ set :deploy_to, "/home/deploy/psworker"
 # set :pty, true
 
 # Default value for :linked_files is []
-# append :linked_files, "config/database.yml", 'config/master.key'
+#append :linked_files, "config/database.yml", "config/credentials.yml.enc", 'config/master.key'
 
 # Default value for linked_dirs is []
 append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system", "vendor", "storage"
@@ -40,4 +40,4 @@ set :keep_releases, 5
 
 
 # set :default_env, { 'RAILS_MASTER_KEY' => File.read('config/master.key').strip }
-
+#RAILS_ENV=production bundle exec rails c

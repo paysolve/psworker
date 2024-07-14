@@ -21,5 +21,10 @@ test:
   database: db/test.sqlite3
 
 production:
-  <<: *default
-  database: db/production.sqlite3
+  adapter: pg
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+  database: <%= ENV['PSWORKER_DATABASE_DATABASE'] %>
+  host: <%= ENV['PSWORKER_DATABASE_HOST'] %>
+  username: <%= ENV['PSWORKER_DATABASE_USERNAME'] %>
+  password: <%= ENV['PSWORKER_DATABASE_PASSWORD'] %>
