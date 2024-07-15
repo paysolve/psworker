@@ -190,8 +190,8 @@ class Account < ApplicationRecord
         else
             txs = self.alignment_since_iso8601((self['last_time'] - 1.second).iso8601)
         end
-        #puts txs.length
-        if !txs.nil? && !self.send_to_psmain(txs).nil?
+        puts txs
+        if !txs.nil? && txs.length > 0 && !self.send_to_psmain(txs).nil?
             self['last_executed_at'] = Time.now
             self['last_time'] = txs[0]['postedDate']
             v = txs.map { |t| t['amount'].gsub('.','').to_i }.sum
