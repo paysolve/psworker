@@ -174,9 +174,11 @@ class Account < ApplicationRecord
 
     def save_txs(txs)
         txs.each do |tx|
-            ntx = Transfer.create_from_basiq(tx, self)
-            if !!ntx
-                tx.merge!({code: ntx.code, created_at: ntx.created_at.iso8601})
+            if Transfer.find_by(reference: Transfer.derive_reference(tx)).nil?
+                ntx = Transfer.create_from_basiq(tx, self)
+                if !!ntx
+                    tx.merge!({code: ntx.code, created_at: ntx.created_at.iso8601})
+                end
             end
         end
         return txs
@@ -186,12 +188,13 @@ class Account < ApplicationRecord
         return nil if !refresh_all_connections
         self.update_account_id
         if self.last_time.nil? # might have to think about which method to call exactly.
-            txs = self.date_alignment(Time.now.iso8601.split('T')[0])
+            txs = self.date_alignment(Time.now.iso8601.split('T')[0]) # might change this as save_txs method may be redundant here
         else
             txs = self.alignment_since_iso8601((self['last_time'] - 1.second).iso8601)
         end
         puts txs
         if !txs.nil? && txs.length > 0 && !self.send_to_psmain(txs).nil?
+            self.save_txs(txs)
             self['last_executed_at'] = Time.now
             self['last_time'] = txs[0]['postDate']
             v = txs.map { |t| t['amount'].gsub('.','').to_i }.sum
