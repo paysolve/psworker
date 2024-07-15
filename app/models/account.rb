@@ -193,7 +193,7 @@ class Account < ApplicationRecord
         puts txs
         if !txs.nil? && txs.length > 0 && !self.send_to_psmain(txs).nil?
             self['last_executed_at'] = Time.now
-            self['last_time'] = txs[0]['postedDate']
+            self['last_time'] = txs[0]['postDate']
             v = txs.map { |t| t['amount'].gsub('.','').to_i }.sum
             self['last_block_transactions'] = txs.length
             self['last_block_value'] = self['last_block_value'] + v
