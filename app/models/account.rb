@@ -8,6 +8,7 @@ class Account < ApplicationRecord
     BASIQ_CONSENT_URL = "https://consent.basiq.io/home" #"https://localhost:8001/home"  
 
     PSMAIN_URL = Rails.env.development? ? "http://localhost:3000" : "https://www.paysolve.com.au"
+    PSMAIN_TOKEN = Rails.env.development? ? 'SdD1J68HZ200RUwbbZ1OykyTwId8GBQf' : ENV['PSMAIN_TOKEN']
 
     GENERAL_LIMIT = 500
 
@@ -209,7 +210,7 @@ class Account < ApplicationRecord
         res = HTTParty.post(PSMAIN_URL+"/admin/transfers",
             :headers => {'Accept' => 'application/json'},
             :body => {
-                'token' => 'SdD1J68HZ200RUwbbZ1OykyTwId8GBQf',
+                'token' => PSMAIN_TOKEN, # 'SdD1J68HZ200RUwbbZ1OykyTwId8GBQf',
                 'transfers' => txs,
                 'bsb' => self.bsb,
                 'account_number' => self.account_number,
