@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
   get '/test_create_payments', to: 'accounts#test_create_payments'
+  post '/update', to: 'accounts#update_api'
 end

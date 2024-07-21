@@ -185,7 +185,7 @@ class Account < ApplicationRecord
     end
 
     def general_alignment
-        return nil if !refresh_all_connections
+        return nil if !self.refresh_all_connections
         self.update_account_id
         if self.last_time.nil? # might have to think about which method to call exactly.
             txs = self.date_alignment(Time.now.iso8601.split('T')[0]) # might change this as save_txs method may be redundant here

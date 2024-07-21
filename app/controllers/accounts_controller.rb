@@ -14,6 +14,32 @@ class AccountsController < ApplicationController
     end
 
     def create_account
-        
+        if Digest::SHA256.hexdigest(params[:token]) != EXTERNAL_TOKEN_DIGEST
+            render json: {error: "Forbidden"}.to_json, status: 401
+            return nil
+        end
+        # Create account from psmain here
+    end
+
+    def update_api
+        if Digest::SHA256.hexdigest(params[:token]) != EXTERNAL_TOKEN_DIGEST
+            render json: {error: "Forbidden"}.to_json, status: 401
+            return nil
+        end
+        if !!params[:exec_all]
+            Account.where("account_identifier is not null").each do |account|
+                account.general_alignment
+            end
+        else
+            params[:account_codes].each do |account_code|
+                account = Account.find_by(psmain_code: account_code)
+                if !account.nil?
+                    account.general_alignment
+                end
+            end
+        end
+        render json: {
+            success: true
+        }.to_json, status: 200
     end
 end
