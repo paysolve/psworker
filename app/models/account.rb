@@ -12,6 +12,8 @@ class Account < ApplicationRecord
 
     GENERAL_LIMIT = 500
 
+    INITIATED, ACTIVE, SUSPENDED, DELETED = [1,2,3,-1]
+
     def Account.basiq_server_auth
         if ENV['BASIQ_SERVER_TOKEN'].nil? || ENV['BASIQ_SERVER_EXPIRY'].nil? || Time.at(ENV['BASIQ_SERVER_EXPIRY'].to_i) < Time.now.to_i
             res = HTTParty.post(BASIQ_ENDPOINT+"/token",
@@ -31,9 +33,9 @@ class Account < ApplicationRecord
     end
 
     def general_save
-        self.last_executed_at = 5.years.ago
+        self.last_executed_at = 5.years.ago # 1.day.ago
         self.last_identifier = ""
-        self.last_time = 5.years.ago
+        self.last_time = 5.years.ago # 1.day.ago
         self.first_identifier = ""
         self.total_transactions = 0
         self.total_transaction_value = 0
@@ -239,6 +241,45 @@ class Account < ApplicationRecord
                 'account_identifier' => self.account_identifier
             })
         return nil if res.code != 201
+    end
+
+    def Account.align_from_basiq(user_id, bsb, account_number, consent_id, status)
+        #return nil if !Account.find_by(bsb: bsb, account_number: account_number).nil?
+        res = HTTParty.get(BASIQ_ENDPOINT+"/users/#{user_id}/accounts",
+            :headers => {'Authorization' => 'Bearer '+Account.basiq_server_auth,
+                'Accept' => 'application/json'})
+        return nil if res.code != 200
+        account = Account.find_by(bsb: bsb, account_number: account_number)
+        acc = res['data'].filter { |a| a['bsb'] == bsb && a['unmaskedAccNum'] == account_number }[0]
+        return nil if acc.nil?
+        if account.nil?
+            account = Account.new(
+                account_identifier: acc['id'],
+                institution: acc['institution'],
+                bsb: acc['bsb'],
+                account_number: acc['unmaskedAccNum'],
+                account_name: acc['accountHolder'],
+                last_executed_at: 1.year.ago,
+                last_time: 1.year.ago,
+                total_transactions: 0,
+                total_transaction_value: 0,
+                test_account: false,
+                consent_identifier: consent_id,
+                connection_identifier: acc['connection'],
+                user_identifier: user_id,
+                status: status
+            )
+            return account.general_save
+        else
+            account.assign_attributes(
+                account_identifier: acc['id'],
+                consent_identifier: consent_id,
+                connection_identifier: acc['connection'],
+                user_identifier: user_id,
+                status: status
+            )
+            return account.save
+        end
     end
 
     def Account.new_from_basiq(user_id, account_id)

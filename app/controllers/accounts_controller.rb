@@ -21,6 +21,35 @@ class AccountsController < ApplicationController
         # Create account from psmain here
     end
 
+    def create_account_from_psmain
+        if Digest::SHA256.hexdigest(params[:token]) != EXTERNAL_TOKEN_DIGEST
+            render json: {error: "Forbidden"}.to_json, status: 401
+            return nil
+        end
+        #account = Account.new_from_basiq(params[:user_id], params[:account_id])
+        if params[:status].to_i != Account::ACTIVE
+            account = Account.find_by(bsb: params[:bsb], account_number: params[:account_number])
+            account.update(status: params[:status].to_i) if !account.nil?
+            render json: {
+                success: true
+            }.to_json
+        end
+        #Account.create_account_from_psmain(params[:user_id], params[:bsb], params[:account_number], params[:consent_id], params[:status])
+        render json: {
+            success: !!Account.align_from_basiq(params[:user_id], params[:bsb], params[:account_number], params[:consent_id], params[:status])
+        }.to_json
+        #if !!account.general_save
+        #    render json: {
+        #        success: true,
+        #        id: account.id
+        #    }.to_json, status: 201
+        #else
+        #    render json: {
+        #        success: true
+        #    }.to_json
+        #end
+    end
+
     def update_api
         if Digest::SHA256.hexdigest(params[:token]) != EXTERNAL_TOKEN_DIGEST
             render json: {error: "Forbidden"}.to_json, status: 401
