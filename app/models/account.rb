@@ -231,6 +231,18 @@ class Account < ApplicationRecord
         return res['transfers'].length
     end
 
+    def Account.account_align_from_psmain(window_minutes)
+        res = HTTParty.post(PSMAIN_URL+"/admin/accountalign",
+            :headers => {'Accept' => 'application/json'},
+            :body => {
+                'token' => PSMAIN_TOKEN,
+                'window_minutes' => window_minutes
+            })
+        res['accounts'].each do |a|
+            Account.align_from_basiq(a['user_id'], a['bsb'], a['account_number'], a['consent_id'], a['status'])
+        end
+    end
+
     def purge_day_psmain(date)
         res = HTTParty.post(PSMAIN_URL+"/admin/transfers",
             :headers => {'Accept' => 'application/json'},

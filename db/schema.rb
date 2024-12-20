@@ -88,11 +88,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_17_102816) do
     t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index "\"posted_datetime=\"", name: "index_transfers_on_posted_datetime="
     t.index ["account_id"], name: "index_transfers_on_account_id"
     t.index ["code"], name: "index_transfers_on_code"
     t.index ["identifier"], name: "index_transfers_on_identifier"
     t.index ["posted_date"], name: "index_transfers_on_posted_date"
+    t.index ["posted_datetime"], name: "index_transfers_on_posted_datetime"
     t.index ["psmain_code"], name: "index_transfers_on_psmain_code"
   end
 
