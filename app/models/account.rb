@@ -201,10 +201,10 @@ class Account < ApplicationRecord
             self['last_time'] = txs[0]['postDate']
             v = txs.map { |t| t['amount'].gsub('.','').to_i }.sum
             self['last_block_transactions'] = txs.length
-            self['last_block_value'] = self['last_block_value'] + v
+            #self['last_block_value'] = self['last_block_value'] + v
             self['last_identifier'] = Transfer.derive_id_from_tx(txs[0])
-            self['total_transactions'] = self['total_transactions'] + txs.length
-            self['total_transaction_value'] = self['total_transaction_value'] + v
+            #self['total_transactions'] = self['total_transactions'] + txs.length
+            #self['total_transaction_value'] = self['total_transaction_value'] + v
             return self.save
         else
             return nil
