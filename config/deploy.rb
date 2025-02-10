@@ -10,7 +10,7 @@ ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, "/home/deploy/psworker"
 
-# Default value for :format is :airbrussh.
+# Default value for :format is :airbrussh. # 060fa74c4440abed6f34f72e17f0271f
 # set :format, :airbrussh
 
 # You can configure the Airbrussh format using :format_options.

@@ -5,4 +5,6 @@ Rails.application.routes.draw do
   # root "articles#index"
   get '/test_create_payments', to: 'accounts#test_create_payments'
   post '/update', to: 'accounts#update_api'
+
+  post '/account/create_account_from_psmain', to: 'accounts#create_account_from_psmain'
 end

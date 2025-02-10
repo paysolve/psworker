@@ -48,6 +48,9 @@ class Account < ApplicationRecord
         res = HTTParty.post(BASIQ_ENDPOINT+"/users/#{self.user_identifier}/connections/refresh",
             :headers => {'Authorization' => 'Bearer '+Account.basiq_server_auth,
                 'Accept' => 'application/json'})
+        if res.code != 202
+            ApplicationRecord.email_error('FAILED_REFRESH_CONNECTIONS', "Failed for Account: psmain_code: #{self['psmain_code']}, bsb: #{self['bsb']}, acct_num: #{self['account_number']}")
+        end
         return res.code == 202
     end
 
@@ -157,6 +160,7 @@ class Account < ApplicationRecord
         #    :headers => {'Authorization' => 'Bearer '+Account.basiq_server_auth,
         #        'Accept' => 'application/json'})
         txs = self.transactions_date(date, 500)
+        return nil if txs.nil?
         ntxs = []
         txs.each do |t|
             if Transfer.find_by(identifier: t['id']).nil? && Transfer.find_by(data_digest: Transfer.data_digest(t['amount'], t['balance'], t['description'], t['reference'])).nil?
@@ -194,8 +198,11 @@ class Account < ApplicationRecord
         else
             txs = self.alignment_since_iso8601((self['last_time'] - 1.second).iso8601)
         end
-        puts txs
-        if !txs.nil? && txs.length > 0 && !self.send_to_psmain(txs).nil?
+        if txs.nil?
+            ApplicationRecord.email_error('FAILED_RETRIEVE_TX', "Failed to retrieve transactions for Account #{self['internal_code']}")
+            return nil
+        end
+        if txs.length > 0 && !self.send_to_psmain(txs).nil?
             self.save_txs(txs)
             self['last_executed_at'] = Time.now
             self['last_time'] = txs[0]['postDate']
@@ -221,7 +228,10 @@ class Account < ApplicationRecord
                 'account_number' => self.account_number,
                 'account_identifier' => self.account_identifier
             })
-        return nil if res.code != 201
+        if ![200,201].include?(res.code)
+            ApplicationRecord.email_error('FAILED_SEND_PSMAIN', "Failed to send transactions for Account #{self['internal_code']}")
+            return nil
+        end
         res['transfers'].each do |tx|
             transfer = Transfer.find_by(code: tx['code'])
             if !transfer.nil?
